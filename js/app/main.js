@@ -24,9 +24,7 @@ requirejs.config({
 
 define(function(require) {
   var $ = require('jquery');
-  var ChannelFollowers = require('app/models/ChannelFollowers');
-  var ChannelMetadata = require('app/models/ChannelMetadata');
-  var ChannelPosts = require('app/models/ChannelPosts');
+  var Channel = require('app/models/Channel');
   var config = require('config');
   var FollowerList = require('app/views/FollowerList');
   var LoginSidebar = require('app/views/LoginSidebar');
@@ -39,15 +37,13 @@ define(function(require) {
 
   function initialize() {
     var channel = getRequestedChannel();
-    var metadata = new ChannelMetadata(channel);
-    var posts = new ChannelPosts(channel);
-    var followers = new ChannelFollowers(channel);
-    var subscribedChannels = new SubscribedChannels();
+    var channelModel = new Channel(channel);
+		var subscribedChannels = new SubscribedChannels();
     getUserCredentials(function(credentials) {
-      setupChannelUI(metadata, posts, followers, subscribedChannels, credentials);
-      fetch(metadata, credentials);
-      fetch(posts, credentials);
-      fetch(followers, credentials);
+      setupChannelUI(channelModel, subscribedChannels, credentials);
+      fetch(channelModel.metadata, credentials);
+      fetch(channelModel.posts, credentials);
+      fetch(channelModel.followers, credentials);
       fetch(subscribedChannels, credentials);
     });
   }
@@ -70,10 +66,10 @@ define(function(require) {
     credentials.verify();
   }
 
-  function setupChannelUI(metadata, posts, followers, subscribedChannels, credentials) {
-    $('#content').append(new MetadataPane({model: metadata}).el);
-    $('#content').append(new PostStream({model: posts}).el);
-    $('#right').append(new FollowerList({model: followers}).el);
+  function setupChannelUI(channelModel, subscribedChannels, credentials) {
+    $('#content').append(new MetadataPane({model: channelModel.metadata}).el);
+    $('#content').append(new PostStream({model: channelModel.posts}).el);
+    $('#right').append(new FollowerList({model: channelModel.followers}).el);
     if (credentials.username) {
       var userMenu = new UserMenu({model: credentials});
       $('#toolbar-right').append(userMenu.el);
