@@ -67,7 +67,7 @@ define(function(require) {
   }
 
   function setupChannelUI(channelModel, subscribedChannels, credentials) {
-    $('#content').append(new MetadataPane({model: channelModel.metadata}).el);
+    $('#content').append(new MetadataPane({model: channelModel, credentials: credentials}).el);
     $('#content').append(new PostStream({model: channelModel.posts}).el);
     $('#right').append(new FollowerList({model: channelModel.followers}).el);
     if (credentials.username) {

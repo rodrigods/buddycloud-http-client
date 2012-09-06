@@ -28,7 +28,7 @@ define(function(require) {
 			this.followers = new ChannelFollowers(channel);
 			this.metadata = new ChannelMetadata(channel);
 			this.posts = new ChannelPosts(channel);
-    },
+    }
   });
 
   return Channel;
