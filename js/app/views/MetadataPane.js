@@ -59,11 +59,11 @@ define(function(require) {
 		},
 
 		_follow: function() {
-			// POST node/subscription 
+			this.options.subscribed.subiscribe(this.model.name, 'posts'); 
 		},
 
 		_unfollow: function() {
-			//DELETE node/subscription
+			this.options.subscribed.unsubscribe(this.model.name, 'posts');
 		}
   });
 

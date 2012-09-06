@@ -35,6 +35,14 @@ define(function(require) {
       });
 
       return _.uniq(channelsList);
+    },
+
+    subscribe: function(channel, node) {
+      this.set(channel + '/' + node, 'publish');
+    },
+
+    unsubscribe: function(channel, node) {
+      this.set(channel + '/' + node, 'none');
     }
   });
 
