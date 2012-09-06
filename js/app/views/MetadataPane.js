@@ -41,10 +41,9 @@ define(function(require) {
 			var username = this.options.credentials.username;
 			if (username) {
 				var followers = this.model.followers.usernames();
-			  var button = $('<button class="unfollow">Unfollow</button>');
-				if (_.has(followers, username)) {
-					button = $('<button class="follow">Follow</button>');
-				}
+			  var button = _.has(followers, username) ? 
+								$('<button class="unfollow">Unfollow</button>') :
+								$('<button class="follow">Follow</button>');
 				this.$('.description').after(button);	
 			}
 		},
@@ -59,10 +58,10 @@ define(function(require) {
 			this._updateButton('unfollow', 'follow', 'Follow');
 		},
 
-		_updateButton: function(oldClass, newClass, label) {
+		_updateButton: function(oldClass, newClass, newText) {
  	  	var button = $('.' + oldClass);
 			button.removeClass(oldClass).addClass(newClass);
-			//update label button.button('option', 'label', label);
+			button.text(newText);
 		}
   });
 
