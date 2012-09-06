@@ -15,8 +15,6 @@
  */
 
 define(function(require) {
-  var _ = require('underscore');
-  var api = require('app/util/api');
   var Backbone = require('backbone');
 	var ChannelFollowers = require('app/models/ChannelFollowers');
 	var ChannelMetadata = require('app/models/ChannelMetadata');

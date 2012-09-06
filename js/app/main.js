@@ -36,14 +36,14 @@ define(function(require) {
   var UserMenu = require('app/views/UserMenu');
 
   function initialize() {
-    var channel = getRequestedChannel();
-    var channelModel = new Channel(channel);
+    var channelId = getRequestedChannel();
+    var channel = new Channel(channelId);
 		var subscribedChannels = new SubscribedChannels();
     getUserCredentials(function(credentials) {
-      setupChannelUI(channelModel, subscribedChannels, credentials);
-      fetch(channelModel.metadata, credentials);
-      fetch(channelModel.posts, credentials);
-      fetch(channelModel.followers, credentials);
+      setupChannelUI(channel, subscribedChannels, credentials);
+      fetch(channel.metadata, credentials);
+      fetch(channel.posts, credentials);
+      fetch(channel.followers, credentials);
       fetch(subscribedChannels, credentials);
     });
   }
@@ -66,10 +66,10 @@ define(function(require) {
     credentials.verify();
   }
 
-  function setupChannelUI(channelModel, subscribedChannels, credentials) {
-    $('#content').append(new MetadataPane({model: channelModel, credentials: credentials}).el);
-    $('#content').append(new PostStream({model: channelModel.posts}).el);
-    $('#right').append(new FollowerList({model: channelModel.followers}).el);
+  function setupChannelUI(channel, subscribedChannels, credentials) {
+    $('#content').append(new MetadataPane({model: channel, credentials: credentials}).el);
+    $('#content').append(new PostStream({model: channel.posts}).el);
+    $('#right').append(new FollowerList({model: channel.followers}).el);
     if (credentials.username) {
       var userMenu = new UserMenu({model: credentials});
       $('#toolbar-right').append(userMenu.el);

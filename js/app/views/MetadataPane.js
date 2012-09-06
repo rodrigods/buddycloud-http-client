@@ -24,8 +24,9 @@ define(function(require) {
   var MetadataPane = Backbone.View.extend({
     tagName: 'header',
     className: 'metadata-pane',
-		events: {'click .follow': '_follow',
-						 'click .unfollow': '_unfollow'},
+		events: {
+			'click .follow': '_follow',
+			'click .unfollow': '_unfollow'},
 
     initialize: function() {
       this.model.metadata.bind('change', this.render, this);
@@ -33,35 +34,36 @@ define(function(require) {
 
     render: function() {
  	    this.$el.html(_.template(template, {metadata: this.model.metadata}));
-			this._renderButton();
+			if (this._isLoggedIn()) {
+				this._renderButton();
+			}
 			avatarFallback(this.$('img'), this.model.metadata.channelType(), 64);
     },
 
-		_renderButton: function() {
+		_isLoggedIn: function() {
+			return !!this.options.credentials.username;
+		},
+
+		_userIsFollowing: function() {
 			var username = this.options.credentials.username;
-			if (username) {
-				var followers = this.model.followers.usernames();
-			  var button = _.has(followers, username) ? 
-								$('<button class="unfollow">Unfollow</button>') :
-								$('<button class="follow">Follow</button>');
-				this.$('.description').after(button);	
-			}
+			var followers = this.model.followers.usernames();
+			return _.include(followers, username);
+		},
+
+		_renderButton: function() {
+			var followers = this.model.followers.usernames();
+		  var button = this._userIsFollowing() ? 
+							$('<button class="unfollow">Unfollow</button>') :
+							$('<button class="follow">Follow</button>');
+			this.$el.append(button);	
 		},
 
 		_follow: function() {
 			// POST node/subscription 
-			this._updateButton('follow', 'unfollow', 'Unfollow');
 		},
 
 		_unfollow: function() {
 			//DELETE node/subscription
-			this._updateButton('unfollow', 'follow', 'Follow');
-		},
-
-		_updateButton: function(oldClass, newClass, newText) {
- 	  	var button = $('.' + oldClass);
-			button.removeClass(oldClass).addClass(newClass);
-			button.text(newText);
 		}
   });
 
