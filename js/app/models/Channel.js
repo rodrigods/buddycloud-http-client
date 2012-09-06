@@ -16,16 +16,42 @@
 
 define(function(require) {
   var Backbone = require('backbone');
-	var ChannelFollowers = require('app/models/ChannelFollowers');
-	var ChannelMetadata = require('app/models/ChannelMetadata');
-	var ChannelPosts = require('app/models/ChannelPosts');
+  var ChannelFollowers = require('app/models/ChannelFollowers');
+  var ChannelMetadata = require('app/models/ChannelMetadata');
+  var ChannelPosts = require('app/models/ChannelPosts');
 
   var Channel = Backbone.Model.extend({
-    constructor: function(channel) {
+    constructor: function(name) {
       Backbone.Model.call(this);
-			this.followers = new ChannelFollowers(channel);
-			this.metadata = new ChannelMetadata(channel);
-			this.posts = new ChannelPosts(channel);
+      this.name = name;
+      this.followers = new ChannelFollowers(name);
+      this.metadata = new ChannelMetadata(name);
+      this.posts = new ChannelPosts(name);
+      this.followers.bind('change', this._triggerFetchIfDone, this);
+      this.metadata.bind('change', this._triggerFetchIfDone, this);
+      this.posts.bind('change', this._triggerFetchIfDone, this);
+    },
+
+    fetch: function(options) {
+      options = _.extend(options || {}, {
+        success: this._triggerFetchCallback()
+      });
+      this.followers.fetch(options);
+      this.metadata.fetch(options);
+      this.posts.fetch(options);
+    },
+
+    _triggerFetchCallback: function() {
+      var self = this;
+      var fetched = [];
+      return function(model) {
+        fetched.push(model);
+        if (_.include(fetched, self.followers) &&
+            _.include(fetched, self.metadata) &&
+            _.include(fetched, self.posts)) {
+          self.trigger('fetch');
+        }
+      }
     }
   });
 

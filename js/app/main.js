@@ -36,20 +36,20 @@ define(function(require) {
   var UserMenu = require('app/views/UserMenu');
 
   function initialize() {
-    var channelId = getRequestedChannel();
-    var channel = new Channel(channelId);
-		var subscribedChannels = new SubscribedChannels();
+    var channel = getRequestedChannel();
+    var subscribedChannels = new SubscribedChannels();
     getUserCredentials(function(credentials) {
       setupChannelUI(channel, subscribedChannels, credentials);
-      fetch(channel.metadata, credentials);
-      fetch(channel.posts, credentials);
-      fetch(channel.followers, credentials);
-      fetch(subscribedChannels, credentials);
+      fetch(channel, credentials);
+      if (credentials.username) {
+        fetch(subscribedChannels, credentials);
+      }
     });
   }
 
   function getRequestedChannel() {
-    return document.location.search.slice(1) || config.defaultChannel;
+    var name = document.location.search.slice(1) || config.defaultChannel;
+    return new Channel(name);
   }
 
   function getUserCredentials(callback) {
@@ -67,15 +67,15 @@ define(function(require) {
   }
 
   function setupChannelUI(channel, subscribedChannels, credentials) {
-    $('#content').append(new MetadataPane({model: channel, credentials: credentials}).el);
+    $('#content').append(new MetadataPane({model: channel.metadata}).el);
     $('#content').append(new PostStream({model: channel.posts}).el);
     $('#right').append(new FollowerList({model: channel.followers}).el);
     if (credentials.username) {
       var userMenu = new UserMenu({model: credentials});
+      var channelsList = new SubscribedChannelsList({model: subscribedChannels});
       $('#toolbar-right').append(userMenu.el);
+      $('#left').append(channelsList);
       userMenu.render();
-
-      $('#left').append(new SubscribedChannelsList({model: subscribedChannels}).el);
     } else {
       var sidebar = new LoginSidebar({model: credentials});
       $('#left').append(sidebar.el);
@@ -92,3 +92,4 @@ define(function(require) {
 
   initialize();
 });
+
