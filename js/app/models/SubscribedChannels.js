@@ -38,13 +38,11 @@ define(function(require) {
     },
 
     subscribe: function(channel, node) {
-      this.set(channel + '/' + node, 'publisher', {silent: true});
-      this.save();
+      this.save(channel + '/' + node, 'publisher', {silent: true});
     },
 
     unsubscribe: function(channel, node) {
-      this.set(channel + '/' + node, 'none', {silent: true});
-      this.save();
+      this.save(channel + '/' + node, 'none', {silent: true});
     },
 
     sync: function(method, model, options) {
