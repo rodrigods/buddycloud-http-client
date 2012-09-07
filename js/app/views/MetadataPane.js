@@ -25,48 +25,48 @@ define(function(require) {
   var MetadataPane = Backbone.View.extend({
     tagName: 'header',
     className: 'metadata-pane',
-        events: {
-            'click .follow': '_follow',
-            'click .unfollow': '_unfollow'},
+    events: {
+      'click .follow': '_follow',
+      'click .unfollow': '_unfollow'},
 
     initialize: function() {
       this.model.metadata.bind('change', this.render, this);
     },
 
     render: function() {
-        this.$el.html(_.template(template, {
-            metadata: this.model.metadata,
+      this.$el.html(_.template(template, {
+        metadata: this.model.metadata,
         linkUrlsFunc: urlUtil.linkUrls}));
-        if (this._isLoggedIn()) {
-            this._renderButton();
-        }
-        avatarFallback(this.$('img'), this.model.metadata.channelType(), 64);
+      if (this._isLoggedIn()) {
+        this._renderButton();
+      }
+      avatarFallback(this.$('img'), this.model.metadata.channelType(), 64);
     },
 
     _isLoggedIn: function() {
-        return !!this.options.credentials.username;
+      return !!this.options.credentials.username;
     },
 
     _userIsFollowing: function() {
-        var username = this.options.credentials.username;
-        var followers = this.model.followers.usernames();
-        return _.include(followers, username);
+      var username = this.options.credentials.username;
+      var followers = this.model.followers.usernames();
+      return _.include(followers, username);
     },
 
     _renderButton: function() {
-        var followers = this.model.followers.usernames();
-        var button = this._userIsFollowing() ? 
-            $('<button class="unfollow">Unfollow</button>') :
-            $('<button class="follow">Follow</button>');
-        this.$el.append(button);    
+      var followers = this.model.followers.usernames();
+      var button = this._userIsFollowing() ? 
+        $('<button class="unfollow">Unfollow</button>') :
+        $('<button class="follow">Follow</button>');
+      this.$el.append(button);    
     },
 
     _follow: function() {
-        this.options.subscribed.subscribe(this.model.name, 'posts'); 
+      this.options.subscribed.subscribe(this.model.name, 'posts'); 
     },
 
     _unfollow: function() {
-        this.options.subscribed.unsubscribe(this.model.name, 'posts');
+      this.options.subscribed.unsubscribe(this.model.name, 'posts');
     }
   });
 
