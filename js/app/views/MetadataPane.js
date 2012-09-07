@@ -20,6 +20,7 @@ define(function(require) {
   var avatarFallback = require('app/util/avatarFallback');
   var Backbone = require('backbone');
   var template = require('text!templates/MetadataPane.html');
+  var urlUtil = require('app/util/urlUtil');
 
   var MetadataPane = Backbone.View.extend({
     tagName: 'header',
@@ -33,7 +34,9 @@ define(function(require) {
 		},
 
     render: function() {
- 	    this.$el.html(_.template(template, {metadata: this.model.metadata}));
+ 	    this.$el.html(_.template(template, {
+ 	    	metadata: this.model.metadata,
+ 	    	linkUrlsFunc: urlUtil.linkUrls}));
 			if (this._isLoggedIn()) {
 				this._renderButton();
 			}
