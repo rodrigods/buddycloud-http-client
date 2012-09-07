@@ -38,11 +38,26 @@ define(function(require) {
     },
 
     subscribe: function(channel, node) {
-      this.set(channel + '/' + node, 'publish');
+      this.set(channel + '/' + node, 'publisher', {silent: true});
+      this.save();
     },
 
     unsubscribe: function(channel, node) {
-      this.set(channel + '/' + node, 'none');
+      this.set(channel + '/' + node, 'none', {silent: true});
+      this.save();
+    },
+
+    sync: function(method, model, options) {
+      if (method === 'update' || method === 'create') {
+        // always POST only changed attributes
+        var changed = model.changedAttributes();
+        if (changed) {
+          options.data = JSON.stringify(changed || {});
+          method = 'create';
+        }
+      }
+
+      Backbone.sync.call(this, method, model, options);
     }
   });
 

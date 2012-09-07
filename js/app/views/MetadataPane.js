@@ -59,7 +59,7 @@ define(function(require) {
 		},
 
 		_follow: function() {
-			this.options.subscribed.subiscribe(this.model.name, 'posts'); 
+			this.options.subscribed.subscribe(this.model.name, 'posts'); 
 		},
 
 		_unfollow: function() {
